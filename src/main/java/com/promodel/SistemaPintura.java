@@ -4,130 +4,89 @@
  */
 package com.promodel;
 
-/**
- *
- * @author User
- */
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
-class SistemaPintura {
-    private static final int HORAS_SIMULACION = 5 * 24; // 5 días
-    private static final int MINUTOS_POR_HORA = 60;
-    private static final int MINUTOS_PINTURA_PIEZA1 = 10;
-    private static final int MINUTOS_PINTURA_PIEZA2 = 10;
-    private static final int MINUTOS_HORNEADO = 6;
-    private static final double TASA_ENTRADA_PIEZA1 = 7.0 / 60.0; // Piezas por minuto
-    private static final double TASA_ENTRADA_PIEZA2 = 3.0 / 60.0; // Piezas por minuto
-    private static final int TIEMPO_MOVIMIENTO = 30; // Segundos
+public class SistemaPintura {
 
-    private Queue<Integer> pinturaPiezas1;
-    private Queue<Integer> pinturaPiezas2;
-    private Queue<Integer> horneadoPiezas;
-    private int tiempoTotalPinturaPieza1;
-    private int tiempoTotalPinturaPieza2;
-    private int tiempoTotalHorneado;
-    private int tiempoHorneado;
-    private int tiempoEsperaPinturaPieza1;
-    private int tiempoEsperaPinturaPieza2;
-    private int tiempoEsperaHorneado;
+    private static final int TIEMPO_PINTURA_MINUTOS = 10;
+    private static final int TIEMPO_HORNEADO_MINUTOS = 6;
+    private static final int CANTIDAD_PINTORES = 2;
+    private static final int CANTIDAD_HORNO = 1;
+    private static final double TIEMPO_ENTRE_PROCESO_MINUTOS = 0.5;
+    private static final double TIEMPO_ENTRE_PROCESO_SEGUNDOS = 30.0;
+    private static final int SIMULACION_DIAS = 5;
+    private static final int SIMULACION_HORAS = SIMULACION_DIAS * 24;
 
-    public SistemaPintura() {
-        pinturaPiezas1 = new LinkedList<>();
-        pinturaPiezas2 = new LinkedList<>();
-        horneadoPiezas = new LinkedList<>();
-        tiempoTotalPinturaPieza1 = 0;
-        tiempoTotalPinturaPieza2 = 0;
-        tiempoTotalHorneado = 0;
-        tiempoHorneado = 0;
-        tiempoEsperaPinturaPieza1 = 0;
-        tiempoEsperaPinturaPieza2 = 0;
-        tiempoEsperaHorneado = 0;
-    }
+    private int cantidadPiezaTipo1 = 0;
+    private int cantidadPiezaTipo2 = 0;
+    private int totalPiezasProcesadas = 0;
+
+    private int tiempoTotalPintura = 0;
+    private int tiempoTotalHorneado = 0;
+    private int tiempoTotalEsperaPintura = 0;
+    private int tiempoTotalEsperaHorneado = 0;
+    private int tiempoTotalSistema = 0;
+
+    private Queue<Integer> colaPintura = new LinkedList<>();
+    private Queue<Integer> colaHorneado = new LinkedList<>();
+    private Random random = new Random();
 
     public void simular() {
-        Random random = new Random();
-        int tiempoPinturaPieza1 = 0;
-        int tiempoPinturaPieza2 = 0;
-        int tiempoMovimiento = 0;
+        int minutosSimulacion = SIMULACION_HORAS * 60;
 
-        for (int minuto = 0; minuto < HORAS_SIMULACION * MINUTOS_POR_HORA; minuto++) {
-            if (random.nextDouble() < TASA_ENTRADA_PIEZA1) {
-                pinturaPiezas1.add(minuto);
+        for (int minutos = 0; minutos < minutosSimulacion; minutos++) {
+            // Llegada de nuevas piezas al sistema
+            if (minutos % (60 / 7) == 0) {
+                cantidadPiezaTipo1++;
+                colaPintura.add(minutos);
             }
-            if (random.nextDouble() < TASA_ENTRADA_PIEZA2) {
-                pinturaPiezas2.add(minuto);
-            }
-
-            if (tiempoPinturaPieza1 == 0 && !pinturaPiezas1.isEmpty()) {
-                int llegadaPieza1 = pinturaPiezas1.poll();
-                tiempoEsperaPinturaPieza1 += minuto - llegadaPieza1;
-                tiempoPinturaPieza1 = MINUTOS_PINTURA_PIEZA1;
+            if (minutos % (60 / 3) == 0) {
+                cantidadPiezaTipo2++;
+                colaPintura.add(minutos);
             }
 
-            if (tiempoPinturaPieza2 == 0 && !pinturaPiezas2.isEmpty()) {
-                int llegadaPieza2 = pinturaPiezas2.poll();
-                tiempoEsperaPinturaPieza2 += minuto - llegadaPieza2;
-                tiempoPinturaPieza2 = MINUTOS_PINTURA_PIEZA2;
+            // Proceso de pintura
+            if (!colaPintura.isEmpty()) {
+                int llegadaPieza = colaPintura.poll();
+                int tiempoEsperaPintura = minutos - llegadaPieza;
+                tiempoTotalEsperaPintura += tiempoEsperaPintura;
+                tiempoTotalPintura += TIEMPO_PINTURA_MINUTOS;
+                colaHorneado.add(minutos + TIEMPO_PINTURA_MINUTOS);
             }
 
-            if (tiempoMovimiento == 0) {
-                if (tiempoPinturaPieza1 > 0) {
-                    horneadoPiezas.add(minuto);
-                    tiempoPinturaPieza1 = 0;
-                } else if (tiempoPinturaPieza2 > 0) {
-                    horneadoPiezas.add(minuto);
-                    tiempoPinturaPieza2 = 0;
-                }
-                tiempoMovimiento = TIEMPO_MOVIMIENTO;
+            // Proceso de horneado
+            if (!colaHorneado.isEmpty()) {
+                
+                int llegadaPieza = colaHorneado.poll();
+                int tiempoEsperaHorneado = minutos - llegadaPieza;
+                tiempoTotalEsperaHorneado += tiempoEsperaHorneado;
+                tiempoTotalHorneado += TIEMPO_HORNEADO_MINUTOS;
             }
-
-            if (tiempoHorneado == 0 && !horneadoPiezas.isEmpty()) {
-                int llegadaHorneado = horneadoPiezas.poll();
-                tiempoEsperaHorneado += minuto - llegadaHorneado;
-                tiempoHorneado = MINUTOS_HORNEADO;
-            }
-
-            tiempoPinturaPieza1 = Math.max(0, tiempoPinturaPieza1 - 1);
-            tiempoPinturaPieza2 = Math.max(0, tiempoPinturaPieza2 - 1);
-            tiempoHorneado = Math.max(0, tiempoHorneado - 1);
-            tiempoMovimiento = Math.max(0, tiempoMovimiento - 1);
         }
+
+        totalPiezasProcesadas = cantidadPiezaTipo1 + cantidadPiezaTipo2;
+        tiempoTotalSistema = tiempoTotalPintura + tiempoTotalHorneado;
     }
 
-    public double utilizacionPinturaPieza1() {
-        return (1.0 - (double) tiempoEsperaPinturaPieza1 / (HORAS_SIMULACION * MINUTOS_POR_HORA)) * 100;
+    public void mostrarResultados() {
+        double utilizacionPintura = (double) tiempoTotalPintura / (SIMULACION_HORAS * 60) / CANTIDAD_PINTORES;
+        double utilizacionHorneado = (double) tiempoTotalHorneado / (SIMULACION_HORAS * 60) / CANTIDAD_HORNO;
+        double tiempoPromedioPermanencia = (double) tiempoTotalSistema / totalPiezasProcesadas;
+        double tiempoPromedioEsperaPintura = (double) tiempoTotalEsperaPintura / totalPiezasProcesadas;
+        double tiempoPromedioEsperaHorneado = (double) tiempoTotalEsperaHorneado / totalPiezasProcesadas;
+
+        System.out.println("a) Utilización del proceso de pintura: " + utilizacionPintura);
+        System.out.println("   Utilización del proceso de horneado: " + utilizacionHorneado);
+        System.out.println("b) Tiempo promedio de permanencia de las piezas en el sistema: " + tiempoPromedioPermanencia);
+        System.out.println("c) Tiempo promedio de espera antes del pintado: " + tiempoPromedioEsperaPintura);
+        System.out.println("   Tiempo promedio de espera antes del horneado: " + tiempoPromedioEsperaHorneado);
     }
 
-    public double utilizacionPinturaPieza2() {
-        return (1.0 - (double) tiempoEsperaPinturaPieza2 / (HORAS_SIMULACION * MINUTOS_POR_HORA)) * 100;
-    }
-
-    public double utilizacionHorneado() {
-        return (1.0 - (double) tiempoEsperaHorneado / (HORAS_SIMULACION * MINUTOS_POR_HORA)) * 100;
-    }
-
-    public double tiempoPromedioPermanenciaPiezas() {
-        return (double) (tiempoTotalPinturaPieza1 + tiempoTotalPinturaPieza2 + tiempoTotalHorneado) / (HORAS_SIMULACION * MINUTOS_POR_HORA);
-    }
-
-    public double tiempoPromedioEsperaPinturaPieza1() {
-        return (double) tiempoEsperaPinturaPieza1 / (pinturaPiezas1.size() + 1);
-    }
-
-    public double tiempoPromedioEsperaPinturaPieza2() {
-        return (double) tiempoEsperaPinturaPieza2 / (pinturaPiezas2.size() + 1);
-    }
     public static void main(String[] args) {
         SistemaPintura sistema = new SistemaPintura();
         sistema.simular();
-
-        System.out.println("a) Utilización de pintura para pieza tipo 1: " + sistema.utilizacionPinturaPieza1() + "%");
-        System.out.println("a) Utilización de pintura para pieza tipo 2: " + sistema.utilizacionPinturaPieza2() + "%");
-        System.out.println("a) Utilización del horno: " + sistema.utilizacionHorneado() + "%");
-        System.out.println("b) Tiempo promedio de permanencia de las piezas en el proceso: " + sistema.tiempoPromedioPermanenciaPiezas() + " minutos");
-        System.out.println("c) Tiempo promedio de espera de las piezas antes del pintado (pieza tipo 1): " + sistema.tiempoPromedioEsperaPinturaPieza1() + " minutos");
-        System.out.println("c) Tiempo promedio de espera de las piezas antes del pintado (pieza tipo 2): " + sistema.tiempoPromedioEsperaPinturaPieza2() + " minutos");
+        sistema.mostrarResultados();
     }
 }
