@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
+
 public class ProcesoPintura {
 
     private static final int TIEMPO_LLEGADA_PIEZA_TIPO_1_EN_SEGUNDOS = 516;
