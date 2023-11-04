@@ -4,10 +4,11 @@
  */
 package com.promodel;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Random;
-
 
 public class ProcesoPintura {
 
@@ -46,19 +47,37 @@ public class ProcesoPintura {
     int tiempoOcupadoHornoAnterior = 0;
     int tEsperaPiezaPintura = 0;
     int tTotalHorno = 0;
+    private List<Integer> lista = new ArrayList<>();
+    private Queue<Integer> queuePrimerPintor = new LinkedList<>();
+    private Queue<Integer> queueSegundoPintor = new LinkedList<>();
+    int tiempoTotalPintadoUnoAnterior = 0;
+    int tiempoTotalPintadoDosAnterior = 0;
 
     public void simular() {
         for (int segundos = 0; segundos < tiempoSimulacionSegundos; segundos++) {
             if (segundos != 0) {
                 if ((segundos % TIEMPO_LLEGADA_PIEZA_TIPO_2_EN_SEGUNDOS) == 0) {
                     cantidadPiezaTipoDos += 1;
-                    queue.add(segundos);
+                    lista.add(segundos);
                 }
                 if ((segundos % TIEMPO_LLEGADA_PIEZA_TIPO_1_EN_SEGUNDOS) == 0) {
                     cantidadPiezaTipoUno += 1;
-                    queue.add(segundos);
+                    lista.add(segundos);
                 }
             }
+        }
+        for (int i = 0; i < lista.size() - 1; i += 2) {
+            queuePrimerPintor.add(lista.get(i));
+            queueSegundoPintor.add(lista.get(i + 1));
+        }
+        while (!queuePrimerPintor.isEmpty()) {
+            int llegadaPieza = queuePrimerPintor.poll();
+            int waitInQueue = 0;
+            if(tiempoTotalPintadoUnoAnterior>llegadaPieza){
+                waitInQueue = tiempoTotalPintadoUnoAnterior - llegadaPieza;
+            
+            }
+
         }
         //proceso de pintado
         while (!queue.isEmpty()) {
@@ -69,7 +88,7 @@ public class ProcesoPintura {
             var tEsperaPiezaUnoActual = 0;
             if (llegadaPiezaUno > tiempoOcupadoPintorUnoAnterior) {
                 tiempoOcioPintorUno += (llegadaPiezaUno - tiempoOcupadoPintorUnoAnterior);
-                
+
             } else {
                 tEsperaPiezaUnoActual = tiempoOcupadoPintorUnoAnterior - llegadaPiezaUno;
             }
@@ -85,7 +104,7 @@ public class ProcesoPintura {
             var tEsperaPiezaDosActual = 0;
             if (llegadaPiezaDos > tiempoOcupadoPintorDosAnterior) {
                 tiempoOcioPintorDos += (llegadaPiezaDos - tiempoOcupadoPintorDosAnterior);
-               
+
             } else {
                 tEsperaPiezaDosActual = tiempoOcupadoPintorDosAnterior - llegadaPiezaDos;
             }
@@ -96,6 +115,7 @@ public class ProcesoPintura {
             queueHorno.add(tTotalPiezaDos + llegadaPiezaDos + TIEMPO_ENTRE_PROCESO_SEGUNDOS);
             tTotalPintura += tiempoOcupadoPintorDosAnterior;
         }
+        /*
         int tiempoOcioHorno=0;
         while (!queueHorno.isEmpty()) {
             var llegadaPieza = queueHorno.poll();
@@ -110,34 +130,57 @@ public class ProcesoPintura {
             tEsperaPiezaPintura += tEsperaPiezaActual;
             tTotalHorno += tEsperaPiezaActual + TIEMPO_HORNEADO_SEGUNDOS;
             tiempoOcupadoHornoAnterior = tTotalHorno + llegadaPieza;
-        }
+        }*/
 
         piezasTerminadas = cantidadPiezaTipoUno + cantidadPiezaTipoDos;
         cantidadTotalPiezas = piezasTerminadas;
     }
 
     public void mostrarResultados() {
-    double utilizacionPintorUno = (double) tTotalPintura / tiempoSimulacionSegundos;
-    double utilizacionPintorDos = (double) tTotalPintura / tiempoSimulacionSegundos;
-    double utilizacionHorno = (double) tiempoOcupadoHornoAnterior / tiempoSimulacionSegundos;
+        double utilizacionPintorUno = (double) tTotalPintura / tiempoSimulacionSegundos;
+        double utilizacionPintorDos = (double) tTotalPintura / tiempoSimulacionSegundos;
+        double utilizacionHorno = (double) tiempoOcupadoHornoAnterior / tiempoSimulacionSegundos;
 
-    double tiempoPromedioPermanencia = (double) tTotalPieza / piezasTerminadas;
-    double tiempoPromedioEsperaPintura = (double) tEsperaPiezaPintura / piezasTerminadas;
-    double tiempoPromedioEsperaHorno = (double) tEsperaPiezaPintura / piezasTerminadas;
+        double tiempoPromedioPermanencia = (double) tTotalPieza / piezasTerminadas;
+        double tiempoPromedioEsperaPintura = (double) tEsperaPiezaPintura / piezasTerminadas;
+        double tiempoPromedioEsperaHorno = (double) tEsperaPiezaPintura / piezasTerminadas;
 
-    System.out.println("Utilización del primer pintor: " + utilizacionPintorUno);
-    System.out.println("Utilización del segundo pintor: " + utilizacionPintorDos);
-    System.out.println("Utilización del horno: " + utilizacionHorno);
-    System.out.println("Tiempo promedio de permanencia de las piezas: " + tiempoPromedioPermanencia);
-    System.out.println("Tiempo promedio de espera antes del pintado: " + tiempoPromedioEsperaPintura);
-    System.out.println("Tiempo promedio de espera antes del horneado: " + tiempoPromedioEsperaHorno);
-}
+        System.out.println("Utilización del primer pintor: " + utilizacionPintorUno);
+        System.out.println("Utilización del segundo pintor: " + utilizacionPintorDos);
+        System.out.println("Utilización del horno: " + utilizacionHorno);
+        System.out.println("Tiempo promedio de permanencia de las piezas: " + tiempoPromedioPermanencia);
+        System.out.println("Tiempo promedio de espera antes del pintado: " + tiempoPromedioEsperaPintura);
+        System.out.println("Tiempo promedio de espera antes del horneado: " + tiempoPromedioEsperaHorno);
+    }
 
+    public Queue<Integer> getQueue() {
+        return queue;
+    }
+
+    public Queue<Integer> getQueueAnterior() {
+        return queueAnterior;
+    }
+
+    public Queue<Integer> getQueueHorno() {
+        return queueHorno;
+    }
+
+    public int getCantidadPiezaTipoUno() {
+        return cantidadPiezaTipoUno;
+    }
+
+    public int getCantidadPiezaTipoDos() {
+        return cantidadPiezaTipoDos;
+    }
 
     public static void main(String[] args) {
         ProcesoPintura p = new ProcesoPintura();
         p.simular();
         p.mostrarResultados();
+        System.out.println(p.getCantidadPiezaTipoUno());
+        System.out.println(p.getCantidadPiezaTipoDos());
+        System.out.println(p.getQueueAnterior().size());
+        System.out.println(p.getQueueAnterior());
     }
 
 }

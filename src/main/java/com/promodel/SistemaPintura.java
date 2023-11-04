@@ -84,9 +84,17 @@ public class SistemaPintura {
         System.out.println("   Tiempo promedio de espera antes del horneado: " + tiempoPromedioEsperaHorneado);
     }
 
+    public Queue<Integer> getColaPintura() {
+        return colaPintura;
+    }
+
+    public Queue<Integer> getColaHorneado() {
+        return colaHorneado;
+    }
+    
+
     public static void main(String[] args) {
         SistemaPintura sistema = new SistemaPintura();
         sistema.simular();
-        sistema.mostrarResultados();
     }
 }

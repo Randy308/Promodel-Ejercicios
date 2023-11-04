@@ -5,6 +5,8 @@ com\promodel\OperarioLimpieza.class
 com\promodel\SistemaPintura.class
 com\promodel\Promodel.class
 com\promodel\Distribucion.class
+com\promodel\Pieza.class
+com\promodel\EjercicioPintura.class
 com\promodel\ProcesoPintura.class
 com\promodel\SimulacionMaquinado.class
 com\promodel\Prueba.class
