@@ -8,45 +8,21 @@ package com.promodel;
  *
  * @author M S I
  */
-import java.util.LinkedList;
-import java.util.Queue;
 
 class TipoPieza {
-    int tiempoMaquinado; // Tiempo de maquinado en minutos
-    int tasaEntrada;    // Tasa de entrada en piezas por hora
+    double tiempoMaquinado; 
+    double tiempoEntrada;
+    int tipoPieza;
 
-    public TipoPieza(int tiempoMaquinado, int tasaEntrada) {
+    public TipoPieza(double tiempoMaquinado, double tiempoEntrada, int tipoPieza) {
         this.tiempoMaquinado = tiempoMaquinado;
-        this.tasaEntrada = tasaEntrada;
-    }
+        this.tiempoEntrada = tiempoEntrada;
+         this.tipoPieza = tipoPieza;
+    } 
+
+    
 }
 
-class Maquinado {
-    private int tiempoRestante;  // Tiempo restante para terminar el maquinado
-    private boolean ocupada;     // Indica si la máquina está ocupada
 
-    public Maquinado() {
-        this.tiempoRestante = 0;
-        this.ocupada = false;
-    }
-
-    public void procesarPieza(TipoPieza tipoPieza) {
-        tiempoRestante = tipoPieza.tiempoMaquinado;
-        ocupada = true;
-    }
-
-    public void avanzarTiempo() {
-        if (ocupada) {
-            tiempoRestante--;
-            if (tiempoRestante == 0) {
-                ocupada = false;
-            }
-        }
-    }
-
-    public boolean estaOcupada() {
-        return ocupada;
-    }
-}
 
 
