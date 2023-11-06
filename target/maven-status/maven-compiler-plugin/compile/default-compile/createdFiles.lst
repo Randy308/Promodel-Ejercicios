@@ -1,14 +1,10 @@
 com\promodel\QueueingSimulation\CarServiceSimulation.class
-com\promodel\Distribucion.class
-com\promodel\EjercicioPintura.class
-com\promodel\Maquinado.class
 com\promodel\ProblemaMaquinado.class
 com\promodel\TipoPieza.class
-com\promodel\CentroMaquinado.class
+com\promodel\CentroCopiado.class
 com\promodel\OperarioLimpieza.class
-com\promodel\SistemaPintura.class
 com\promodel\Promodel.class
+com\promodel\Distribucion.class
 com\promodel\Pieza.class
 com\promodel\ProcesoPintura.class
-com\promodel\Prueba.class
 com\promodel\QueueingSimulation\CarServer.class

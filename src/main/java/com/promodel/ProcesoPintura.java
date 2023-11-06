@@ -117,18 +117,20 @@ public class ProcesoPintura {
         int tiempoSimulacion = tiempoSimulacionSegundos;
         double utilizacionHorno = (double) 100 * tHornoOcupadoTotal / tiempoSimulacionSegundos;
 
-        double tiempoPromedioPermanencia = (double) tTotalPieza / piezasTerminadas;
+        double tiempoPromedioPermanencia = (double) (tTotalPinturaDos+tTotalPinturaDos+tHornoOcupadoTotal) / piezasTerminadas;
         double tiempoPromedioEsperaPintura = (double) ((tEsperaPiezaDosPintura+tEsperaPiezaUnoPintura))/piezasFinalizadas;
-        int tiempoPromedioEsperaHorno = esperaTotalHorno / piezasFinalizadas;
+        double tiempoPromedioEsperaHorno = (double) esperaTotalHorno / piezasFinalizadas;
 
-        System.out.println("Utilización del primer pintor: " + utilizacionPintorUno + "%");
-        System.out.println("Utilización del segundo pintor: " + utilizacionPintorDos + "%");
+        System.out.println("Utilización del primer pintor: " + utilizacionPintorUno + " %");
+        System.out.println("Utilización del segundo pintor: " + utilizacionPintorDos + " %");
+        var promedioPintura = (utilizacionPintorDos+utilizacionPintorUno)/2;
+        System.out.println("Utilización del proceso de  pintura: " + String.format("%.3f", promedioPintura) + " %");
 
         System.out.println("Tiempo de simulacion: " + tiempoSimulacion / 3600 + " horas");
         System.out.println("Utilización del horno: " + utilizacionHorno + "%");
-        System.out.println("Tiempo promedio de permanencia de las piezas: " + tiempoPromedioPermanencia);
-        System.out.println("Tiempo promedio de espera antes del pintado: " + tiempoPromedioEsperaPintura);
-        System.out.println("Tiempo promedio de espera antes del horneado: " + tiempoPromedioEsperaHorno);
+        System.out.println("Tiempo promedio de permanencia de las piezas: " + tiempoPromedioPermanencia/60+ " minutos");
+        System.out.println("Tiempo promedio de espera antes del pintado: " + tiempoPromedioEsperaPintura+ " minutos");
+        System.out.println("Tiempo promedio de espera antes del horneado: " + tiempoPromedioEsperaHorno+ " minutos");
     }
 
     public Queue<Integer> getQueue() {
@@ -147,10 +149,6 @@ public class ProcesoPintura {
         ProcesoPintura p = new ProcesoPintura();
         p.simular();
         p.mostrarResultados();
-        System.out.println(p.getQueueHorno());
-        System.out.println(p.getQueueHorno().size());
-        System.out.println(p.getQueueAnterior().size());
-        System.out.println(p.getQueueAnterior());
     }
 
 }

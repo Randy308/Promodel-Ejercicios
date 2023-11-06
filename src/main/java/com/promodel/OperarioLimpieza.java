@@ -53,9 +53,9 @@ public class OperarioLimpieza {
         double tiempoPromedioPermanenciaPiezas = tiempoPermanencia / piezasLimpiadas;
         double tiempoPromedioEsperaPiezas = tiempoTotalEspera / piezasLimpiadas;
 
-        System.out.println("a) Utilización del operario: " + utilizacionOperario + "%");
-        System.out.println("a) Tiempo de ocio del operario: " + ocioOperario + " minutos");
-        System.out.println("b) Tiempo promedio de permanencia de las piezas: " + tiempoPromedioPermanenciaPiezas + " minutos");
-        System.out.println("c) Tiempo promedio de espera de las piezas antes de ser limpiadas: " + tiempoPromedioEsperaPiezas + " minutos");
+        System.out.println("Utilización del operario: " + utilizacionOperario + "%");
+        System.out.println("Tiempo de ocio del operario: " + ocioOperario + " minutos");
+        System.out.println("Tiempo promedio de permanencia de las piezas: " + tiempoPromedioPermanenciaPiezas + " minutos");
+        System.out.println("Tiempo promedio de espera de las piezas antes de ser limpiadas: " + tiempoPromedioEsperaPiezas + " minutos");
     }
 }
