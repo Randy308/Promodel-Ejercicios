@@ -4,20 +4,22 @@
  */
 package com.promodel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
-public class ProcesoPintura {
+public class Problema2 {
 
     private static final int TIEMPO_LLEGADA_PIEZA_TIPO_1_EN_SEGUNDOS = 516;
     private static final int TIEMPO_LLEGADA_PIEZA_TIPO_2_EN_SEGUNDOS = 1200;
     private static final int TIEMPO_PINTURA_SEGUNDOS = 600;
     private static final int TIEMPO_HORNEADO_SEGUNDOS = 360;
     private static final int TIEMPO_ENTRE_PROCESO_SEGUNDOS = 30;
-    private static final int HORAS_SIMULACION = 120;
+    //private int horasSimulacionTotal = 120;
 
     private int piezasTerminadas = 0;
-    private int tiempoSimulacionSegundos = HORAS_SIMULACION * 60 * 60;
     private int cantidadPiezaTipoUno = 0;
     private int cantidadPiezaTipoDos = 0;
 
@@ -39,7 +41,8 @@ public class ProcesoPintura {
     private int tHornoOcupadoTotal = 0;
     private int esperaTotalHorno = 0;
 
-    public void simular() {
+    public void simular(int horasSimulacionTotal) {
+        int tiempoSimulacionSegundos = horasSimulacionTotal * 3600;
         for (int segundos = 0; segundos < tiempoSimulacionSegundos; segundos++) {
             if (segundos != 0) {
                 if ((segundos % TIEMPO_LLEGADA_PIEZA_TIPO_2_EN_SEGUNDOS) == 0) {
@@ -62,9 +65,9 @@ public class ProcesoPintura {
             var tEsperaPiezaUnoActual = 0;
             if (llegadaPiezaUno < tiempoOcupadoPintorUnoAnterior) {
                 tEsperaPiezaUnoActual = tiempoOcupadoPintorUnoAnterior - llegadaPiezaUno;
-                
+
             }
-            
+
             tEsperaPiezaUnoPintura += tEsperaPiezaUnoActual;
             tTotalPiezaUno += tEsperaPiezaUnoActual + TIEMPO_PINTURA_SEGUNDOS;
 
@@ -109,29 +112,32 @@ public class ProcesoPintura {
             }
         }
         piezasTerminadas = cantidadPiezaTipoUno + cantidadPiezaTipoDos;
-    }
-
-    public void mostrarResultados() {
         double utilizacionPintorUno = (double) 100 * tTotalPinturaUno / tiempoSimulacionSegundos;
         double utilizacionPintorDos = (double) 100 * tTotalPinturaDos / tiempoSimulacionSegundos;
         int tiempoSimulacion = tiempoSimulacionSegundos;
         double utilizacionHorno = (double) 100 * tHornoOcupadoTotal / tiempoSimulacionSegundos;
 
-        double tiempoPromedioPermanencia = (double) (tTotalPinturaDos+tTotalPinturaDos+tHornoOcupadoTotal) / piezasTerminadas;
-        double tiempoPromedioEsperaPintura = (double) ((tEsperaPiezaDosPintura+tEsperaPiezaUnoPintura))/piezasFinalizadas;
+        double tiempoPromedioPermanencia = (double) (tTotalPinturaDos + tTotalPinturaDos + tHornoOcupadoTotal) / piezasTerminadas;
+        double tiempoPromedioEsperaPintura = (double) ((tEsperaPiezaDosPintura + tEsperaPiezaUnoPintura)) / piezasFinalizadas;
         double tiempoPromedioEsperaHorno = (double) esperaTotalHorno / piezasFinalizadas;
+        
+        var promedioPintura = (utilizacionPintorDos + utilizacionPintorUno) / 2;
+        String[] headers = {"Inciso", "Respuesta"};
+        List<List<String>> data = new ArrayList<>();
 
-        System.out.println("Utilización del primer pintor: " + utilizacionPintorUno + " %");
-        System.out.println("Utilización del segundo pintor: " + utilizacionPintorDos + " %");
-        var promedioPintura = (utilizacionPintorDos+utilizacionPintorUno)/2;
-        System.out.println("Utilización del proceso de  pintura: " + String.format("%.3f", promedioPintura) + " %");
-
-        System.out.println("Tiempo de simulacion: " + tiempoSimulacion / 3600 + " horas");
-        System.out.println("Utilización del horno: " + utilizacionHorno + "%");
-        System.out.println("Tiempo promedio de permanencia de las piezas: " + tiempoPromedioPermanencia/60+ " minutos");
-        System.out.println("Tiempo promedio de espera antes del pintado: " + tiempoPromedioEsperaPintura+ " minutos");
-        System.out.println("Tiempo promedio de espera antes del horneado: " + tiempoPromedioEsperaHorno+ " minutos");
+        data.add(Arrays.asList("Utilización del primer pintor: ", String.format("%,.4f", utilizacionPintorUno) + " %"));
+        data.add(Arrays.asList("Utilización del segundo pintor: ", String.format("%,.4f", utilizacionPintorDos) + " %"));
+        data.add(Arrays.asList("Utilización del proceso de pintura: ", String.format("%,.4f", promedioPintura) + " %"));
+        data.add(Arrays.asList("Tiempo de simulación: ", String.format("%,.1f", (tiempoSimulacion / 3600.0)) + " horas"));
+        data.add(Arrays.asList("Utilización del horno: ", String.format("%,.4f", utilizacionHorno) + " %"));
+        data.add(Arrays.asList("Tiempo promedio de permanencia de las piezas:", String.format("%,.4f", (tiempoPromedioPermanencia / 60.0)) + " minutos"));
+        data.add(Arrays.asList("Tiempo promedio de espera antes del pintado: ", String.format("%,.4f", tiempoPromedioEsperaPintura) + " minutos"));
+        data.add(Arrays.asList("Tiempo promedio de espera antes del horneado: ", String.format("%,.4f", tiempoPromedioEsperaHorno) + " minutos"));
+        TablaSimulacion tb = new TablaSimulacion();
+        tb.crearTablaSimulacion(headers, data);
     }
+
+    
 
     public Queue<Integer> getQueue() {
         return queue;
@@ -146,9 +152,9 @@ public class ProcesoPintura {
     }
 
     public static void main(String[] args) {
-        ProcesoPintura p = new ProcesoPintura();
-        p.simular();
-        p.mostrarResultados();
+        Problema2 p = new Problema2();
+        int horasSimulacionTotal = 120;
+        p.simular(horasSimulacionTotal);
     }
 
 }

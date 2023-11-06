@@ -13,12 +13,29 @@ class TipoPieza {
     double tiempoMaquinado; 
     double tiempoEntrada;
     int tipoPieza;
+    double tiempoInspeccion;
 
     public TipoPieza(double tiempoMaquinado, double tiempoEntrada, int tipoPieza) {
         this.tiempoMaquinado = tiempoMaquinado;
         this.tiempoEntrada = tiempoEntrada;
          this.tipoPieza = tipoPieza;
-    } 
+    }
+
+    public TipoPieza(double tiempoMaquinado, double tiempoEntrada, int tipoPieza, double tiempoInspeccion) {
+        this.tiempoMaquinado = tiempoMaquinado;
+        this.tiempoEntrada = tiempoEntrada;
+        this.tipoPieza = tipoPieza;
+        this.tiempoInspeccion = tiempoInspeccion;
+    }
+
+    public double getTiempoInspeccion() {
+        return tiempoInspeccion;
+    }
+
+    public void setTiempoInspeccion(double tiempoInspeccion) {
+        this.tiempoInspeccion = tiempoInspeccion;
+    }
+    
 
     
 }
